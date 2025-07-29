@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Collections - List Operations</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .nav a:hover {
+            background-color: #2980b9;
+        }
+        .nav a.active {
+            background-color: #2ecc71;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #555;
+        }
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 5px;
+            width: 80px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .list-display {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .clear-btn {
+            background-color: #dc3545;
+        }
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="index.html">Back to Main</a>
+        <a href="demo-collections.html" class="active">Demo Collections</a>
+    </div>
+    <div class="container">
+        <h1>Demo Collections - List Operations</h1>
+        
+        <!-- First List Input -->
+        <div class="section">
+            <h3>First List</h3>
+            <div class="input-group">
+                <label>Size:</label>
+                <input type="number" id="size1" min="1" max="20" placeholder="Size">
+                <button onclick="setSize(1)">Set Size</button>
+            </div>
+            <div id="list1Inputs" style="display: none;">
+                <div class="input-group" id="list1Container"></div>
+                <button onclick="addToList(1)">Add to List 1</button>
+                <button class="clear-btn" onclick="clearList(1)">Clear List 1</button>
+            </div>
+            <div class="list-display" id="list1Display">List 1: []</div>
+        </div>
+
+        <!-- Second List Input -->
+        <div class="section">
+            <h3>Second List</h3>
+            <div class="input-group">
+                <label>Size:</label>
+                <input type="number" id="size2" min="1" max="20" placeholder="Size">
+                <button onclick="setSize(2)">Set Size</button>
+            </div>
+            <div id="list2Inputs" style="display: none;">
+                <div class="input-group" id="list2Container"></div>
+                <button onclick="addToList(2)">Add to List 2</button>
+                <button class="clear-btn" onclick="clearList(2)">Clear List 2</button>
+            </div>
+            <div class="list-display" id="list2Display">List 2: []</div>
+        </div>
+
+        <!-- Merge and Sort -->
+        <div class="section">
+            <h3>Merge and Sort</h3>
+            <button onclick="mergeAndSort()">Merge and Sort Lists</button>
+            <div class="list-display" id="mergedDisplay">Merged List: []</div>
+            <div class="list-display" id="sortedDisplay">Sorted List: []</div>
+        </div>
+
+        <!-- Find Target -->
+        <div class="section">
+            <h3>Split List Based on Target Value</h3>
+            <div class="input-group">
+                <label>Target Value:</label>
+                <input type="number" id="target" placeholder="Enter target">
+                <button onclick="findTarget()">Split List</button>
+            </div>
+            <div class="result" id="targetResult" style="display: none;"></div>
+        </div>
+
+        <!-- Reset All -->
+        <div class="section">
+            <button class="clear-btn" onclick="resetAll()">Reset All</button>
+        </div>
+    </div>
+
+    <script>
+        let list1 = [];
+        let list2 = [];
+        let mergedList = [];
+        let sortedList = [];
+
+        function setSize(listNum) {
+            const sizeInput = document.getElementById(`size${listNum}`);
+            const size = parseInt(sizeInput.value);
+            
+            if (size < 1 || size > 20) {
+                alert('Please enter a valid size between 1 and 20');
+                return;
+            }
+
+            const inputsDiv = document.getElementById(`list${listNum}Inputs`);
+            const container = document.getElementById(`list${listNum}Container`);
+            
+            // Clear previous inputs
+            container.innerHTML = '';
+            
+            // Create input fields
+            for (let i = 0; i < size; i++) {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.placeholder = `Number ${i + 1}`;
+                input.className = 'list-input';
+                container.appendChild(input);
+            }
+            
+            inputsDiv.style.display = 'block';
+        }
+
+        function addToList(listNum) {
+            const container = document.getElementById(`list${listNum}Container`);
+            const inputs = container.querySelectorAll('input');
+            const list = listNum === 1 ? list1 : list2;
+            
+            // Clear the list
+            list.length = 0;
+            
+            // Add values from inputs
+            inputs.forEach(input => {
+                const value = parseInt(input.value);
+                if (!isNaN(value)) {
+                    list.push(value);
+                }
+            });
+            
+            // Update display
+            updateListDisplay(listNum);
+        }
+
+        function clearList(listNum) {
+            const list = listNum === 1 ? list1 : list2;
+            list.length = 0;
+            updateListDisplay(listNum);
+            
+            // Clear input fields
+            const container = document.getElementById(`list${listNum}Container`);
+            const inputs = container.querySelectorAll('input');
+            inputs.forEach(input => input.value = '');
+        }
+
+        function updateListDisplay(listNum) {
+            const list = listNum === 1 ? list1 : list2;
+            const display = document.getElementById(`list${listNum}Display`);
+            display.textContent = `List ${listNum}: [${list.join(', ')}]`;
+        }
+
+        function mergeAndSort() {
+            // Merge lists
+            mergedList = [...list1, ...list2];
+            
+            // Sort merged list
+            sortedList = [...mergedList].sort((a, b) => a - b);
+            
+            // Update displays
+            document.getElementById('mergedDisplay').textContent = `Merged List: [${mergedList.join(', ')}]`;
+            document.getElementById('sortedDisplay').textContent = `Sorted List: [${sortedList.join(', ')}]`;
+            
+            // Show result
+            const result = document.getElementById('targetResult');
+            result.style.display = 'block';
+            result.innerHTML = '<span class="success">Lists merged and sorted successfully!</span>';
+        }
+
+        function findTarget() {
+            const targetInput = document.getElementById('target');
+            const target = parseInt(targetInput.value);
+            
+            if (isNaN(target)) {
+                alert('Please enter a valid target number');
+                return;
+            }
+            
+            if (sortedList.length === 0) {
+                alert('Please merge and sort the lists first');
+                return;
+            }
+            
+            const result = document.getElementById('targetResult');
+            
+            // Split the list into two parts based on target value
+            const lessThanTarget = sortedList.filter(num => num < target);
+            const greaterThanTarget = sortedList.filter(num => num > target);
+            const equalToTarget = sortedList.filter(num => num === target);
+            
+            let resultText = `<strong>Splitting list based on target value: ${target}</strong><br><br>`;
+            
+            // Display values less than target
+            if (lessThanTarget.length > 0) {
+                resultText += `<span class="success">Values less than ${target}: [${lessThanTarget.join(', ')}]</span><br>`;
+            } else {
+                resultText += `<span class="error">No values less than ${target}</span><br>`;
+            }
+            
+            // Display values equal to target
+            if (equalToTarget.length > 0) {
+                resultText += `<span class="success">Values equal to ${target}: [${equalToTarget.join(', ')}] (${equalToTarget.length} occurrence${equalToTarget.length > 1 ? 's' : ''})</span><br>`;
+            } else {
+                resultText += `<span class="error">No values equal to ${target}</span><br>`;
+            }
+            
+            // Display values greater than target
+            if (greaterThanTarget.length > 0) {
+                resultText += `<span class="success">Values greater than ${target}: [${greaterThanTarget.join(', ')}]</span>`;
+            } else {
+                resultText += `<span class="error">No values greater than ${target}</span>`;
+            }
+            
+            result.innerHTML = resultText;
+            result.style.display = 'block';
+        }
+
+        function resetAll() {
+            // Clear all lists
+            list1.length = 0;
+            list2.length = 0;
+            mergedList.length = 0;
+            sortedList.length = 0;
+            
+            // Clear displays
+            updateListDisplay(1);
+            updateListDisplay(2);
+            document.getElementById('mergedDisplay').textContent = 'Merged List: []';
+            document.getElementById('sortedDisplay').textContent = 'Sorted List: []';
+            document.getElementById('targetResult').style.display = 'none';
+            
+            // Hide input sections
+            document.getElementById('list1Inputs').style.display = 'none';
+            document.getElementById('list2Inputs').style.display = 'none';
+            
+            // Clear all inputs
+            document.getElementById('size1').value = '';
+            document.getElementById('size2').value = '';
+            document.getElementById('target').value = '';
+            
+            // Clear input containers
+            document.getElementById('list1Container').innerHTML = '';
+            document.getElementById('list2Container').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
