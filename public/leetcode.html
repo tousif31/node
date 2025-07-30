@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Clone - Two Sum Problem</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+        }
+
+        .problem-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+
+        .problem-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty.easy {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .problem-description {
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+
+        .example-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .example-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .example-content {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            border-left: 4px solid #3498db;
+        }
+
+        .code-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .language-selector {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .run-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .run-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .run-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .CodeMirror {
+            height: 400px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .results-section {
+            margin-top: 2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 200px;
+        }
+
+        .results-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .test-case {
+            background: white;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e0e0e0;
+        }
+
+        .test-case.passed {
+            border-left-color: #28a745;
+        }
+
+        .test-case.failed {
+            border-left-color: #dc3545;
+        }
+
+        .test-case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-case-status {
+            font-weight: 600;
+        }
+
+        .test-case-status.passed {
+            color: #28a745;
+        }
+
+        .test-case-status.failed {
+            color: #dc3545;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .problem-section, .code-section {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>LeetCode Clone</h1>
+    </div>
+
+    <div class="container">
+        <div class="problem-section">
+            <h1 class="problem-title">1. Even or Odd</h1>
+            <span class="difficulty easy">Easy</span>
+            
+            <div class="problem-description">
+                <p>Given an integer <code>num</code>, return <em>"Even" if the number is even, or "Odd" if the number is odd</em>.</p>
+                
+                <p>A number is considered even if it is divisible by 2 with no remainder. A number is considered odd if it is not divisible by 2.</p>
+                
+                <p>Note: Zero (0) is considered an even number.</p>
+            </div>
+
+            <div class="example-section">
+                <h3 class="example-title">Example 1:</h3>
+                <div class="example-content">
+                    <p><strong>Input:</strong> num = 2</p>
+                    <p><strong>Output:</strong> "Even"</p>
+                    <p><strong>Explanation:</strong> 2 is divisible by 2, so it's even.</p>
+                </div>
+            </div>
+
+            <div class="example-section">
+                <h3 class="example-title">Example 2:</h3>
+                <div class="example-content">
+                    <p><strong>Input:</strong> num = 3</p>
+                    <p><strong>Output:</strong> "Odd"</p>
+                    <p><strong>Explanation:</strong> 3 is not divisible by 2, so it's odd.</p>
+                </div>
+            </div>
+
+            <div class="example-section">
+                <h3 class="example-title">Example 3:</h3>
+                <div class="example-content">
+                    <p><strong>Input:</strong> num = 0</p>
+                    <p><strong>Output:</strong> "Even"</p>
+                    <p><strong>Explanation:</strong> 0 is divisible by 2, so it's even.</p>
+                </div>
+            </div>
+
+            <div class="example-section">
+                <h3 class="example-title">Example 4:</h3>
+                <div class="example-content">
+                    <p><strong>Input:</strong> num = -4</p>
+                    <p><strong>Output:</strong> "Even"</p>
+                    <p><strong>Explanation:</strong> -4 is divisible by 2, so it's even.</p>
+                </div>
+            </div>
+
+            <div class="example-section">
+                <h3 class="example-title">Constraints:</h3>
+                <div class="example-content">
+                    <ul>
+                        <li>-10<sup>9</sup> ≤ num ≤ 10<sup>9</sup></li>
+                        <li>num is an integer</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-section">
+            <div class="code-header">
+                <select class="language-selector" id="languageSelector">
+                    <option value="java">Java</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                </select>
+                <button class="run-button" id="runButton">▶ Run Code</button>
+            </div>
+
+            <textarea id="codeEditor"></textarea>
+
+            <div class="results-section">
+                <h3 class="results-title">Test Results</h3>
+                <div id="resultsContainer">
+                    <p class="loading">Click "Run Code" to test your solution</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="leetcode.js"></script>
+</body>
+</html> 
